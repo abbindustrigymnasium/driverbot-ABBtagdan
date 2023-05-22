@@ -29,7 +29,8 @@ function onConnectionLost (responseObject) {
 }
 
 
-// const client = new Paho.MQTT.Client('10.0.0.2', 8884, "myclientid_" + parseInt(Math.random() * 100, 10)) 
+// const client = new Paho.MQTT.Client('10.0.0.2', 8884, "myclientid_" + parseInt(Math.random() * 100, 10))
+//för nätverket hemma 
 const client = new Paho.MQTT.Client('10.22.5.228', 8884, "myclientid_" + parseInt(Math.random() * 100, 10)) 
 
 client.onConnectionLost = onConnectionLost 
