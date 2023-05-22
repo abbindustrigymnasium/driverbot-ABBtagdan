@@ -8,54 +8,88 @@ Servo Servot;
 void onConnectionEstablished();
 
 EspMQTTClient client(
- "ABB_Indgym",
-  "mittwifiarsabra",
+  "ABB_Gym_IOT",
+  "Welcome2abb",
   "10.22.5.228",
-  "",
-  "",
+  "TageDanielsson",
+  "12345",
   "Bilen",
   1884
 );
 
-void setup() {
+int f = 1;
+int dir = 1;
 
+// f: forward (0: bakåt, 1: stilla, 3: framåt)
+// dir: direction (0: vänster, 1: rakt, 2: höger)
+// f och dir är för logs
+
+void setup() {
 Wire.begin(D1,D3);
       
 pinMode(D1, OUTPUT);
 pinMode(D3, OUTPUT);
 analogWrite(D1, 0);
 Servot.attach(D5,544,2400);
-onConnectionEstablished();
-
-float v = 0;
-
-Servot.write(v);
-
 Serial.begin(115200);
 }
 
 void onConnectionEstablished()
 {
+  client.publish("logs", "ESP Connected to broker! ");
   client.subscribe("f", [] (const String &forwardvalue)
   {
-    if(forwardvalue.toFloat() < 0){
-      digitalWrite(D3, LOW);
+    if(forwardvalue.toFloat() < -1.25){
+      if(f != 0){
+        client.publish("logs", "Driving Backwards");
+        digitalWrite(D3, LOW);
+        f = 0;
+      }
+    }
+    else if(forwardvalue.toFloat() > 1.25){
+      if(f != 2){
+        client.publish("logs", "Driving Forwards");
+        f = 2;
+        digitalWrite(D3, HIGH);
+      }
     }
     else{
-      digitalWrite(D3, HIGH);
+      if(f != 1){
+      f = 1;
+      analogWrite(D1, 0);
+      client.publish("logs", "Standing Still");
+      }
     }
-    analogWrite(D1, map(forwardvalue.toFloat(), 0, 5, 0, 1023));
+
+    if(f != 1){
+      analogWrite(D1, map(abs(forwardvalue.toFloat()), 0, 10, 0, 1023));
+    }
   });
+
   client.subscribe("dir", [] (const String &direction)
   {
-    Servot.write(map(direction.toFloat(), -90, 90, 0, 180));
-  });
+    Servot.write(map(direction.toFloat(), -50, 50, 0, 150));
+    if(direction.toFloat() < -5) {
+      if(dir != 0) {
+        client.publish("logs", "Turned Left");
+        dir = 0;
+      }
+    }
+    else if(direction.toFloat() > 5){
+      if(dir != 2) {
+        client.publish("logs", "Turned Right");
+        dir = 2;
+      }
+    }
+    else{
+      if(dir != 1) {
+        client.publish("logs", "Pointing Straight");
+        dir = 1;
+      }
+    }
+    
+  });;
   
-  client.publish("joakim.flink@abbindustrigymnasium.se/lampa", "This is a message");
-
-  client.executeDelayed(5 * 1000, []() {
-    client.publish("joakim.flink@abbindustrigymnasium.se/lampa", "This is a message sent 5 seconds later");
-  });
 }
 
 
