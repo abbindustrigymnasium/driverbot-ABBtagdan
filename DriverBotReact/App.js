@@ -37,7 +37,7 @@ function onConnectionLost (responseObject) {
 onMessageArrived = (message) =>  
   {
     console.log(message.payloadString)
-    Global.logs = [...Global.logs, {key: message.payloadString + new Date().toLocaleTimeString() + id.toString(), value: message.payloadString + "\n" + new Date().toLocaleTimeString()}]
+    Global.logs = [...Global.logs, {key: message.payloadString + new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString() + id.toString(), value: message.payloadString + "\n" + new Date.toLocaleDateString() +" "+	new Date().toLocaleTimeString()}]
     id++
     console.log(Global.logs)
   }

@@ -15,13 +15,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMotionUsageDescription": "Allow $(PRODUCT_NAME) to access your device motion."
+      },
+      "bundleIdentifier": "DriverBotReact"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tage_danielsson.DriverBotReact"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +38,11 @@
           "motionPermission": "Allow $(PRODUCT_NAME) to access your device motion."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "28283274-f306-4e2b-8776-252fb09fe7c0"
+      }
+    }
   }
 }
